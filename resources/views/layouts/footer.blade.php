@@ -37,14 +37,12 @@
             <li><a href="{{ url('tr/hizmetler') }}">Hizmetler</a></li>
             <li><a href="{{ url('tr/projeler') }}">Projeler</a></li>
             <li><a href="{{ url('tr/hakkimizda') }}">Hakkımızda</a></li>
-            <li><a href="{{ url('tr/blog') }}">Blog</a></li>
             <li><a href="{{ url('tr/iletisim') }}">İletişim</a></li>
             <li><a href="{{ url('tr/kvkk') }}">KVKK</a></li>
           @else
             <li><a href="{{ url('en/services') }}">Services</a></li>
             <li><a href="{{ url('en/projects') }}">Projects</a></li>
             <li><a href="{{ url('en/about') }}">About Us</a></li>
-            <li><a href="{{ url('en/blog') }}">Blog</a></li>
             <li><a href="{{ url('en/contact') }}">Contact</a></li>
             <li><a href="{{ url('en/privacy-policy') }}">Privacy Policy</a></li>
           @endif

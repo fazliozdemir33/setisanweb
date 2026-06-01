@@ -33,18 +33,24 @@
 
   @if($isHome)
   <div id="app-preloader" class="preloader">
-    <div class="preloader__logo" id="preloader-logo" style="display: flex; align-items: center; gap: 0.5rem;">
-      <img src="{{ asset('images/logo.png') }}" alt="Setisan Logo" style="height: 1.2em; width: auto; object-fit: contain;">
-      <span>SETISAN<span style="color: var(--accent);">.</span></span>
+    <div class="preloader__logo" id="preloader-logo" style="display: flex; align-items: center; gap: 0.6rem;">
+      <img src="{{ asset('images/logo.png') }}" alt="Setisan Logo" style="height: 2.2rem; width: auto; object-fit: contain;">
+      <div style="display: flex; flex-direction: column; text-align: left; line-height: 1.1;">
+        <span style="font-size: 1.5rem; font-weight: 800; letter-spacing: -0.04em; color: var(--white);">SETISAN<span style="color: var(--accent);">.</span></span>
+        <span style="font-size: 0.52rem; font-weight: 600; letter-spacing: 0.16em; text-transform: uppercase; color: inherit; opacity: 0.85; margin-top: 0.15rem; white-space: nowrap;">ELEKTROMEKANİK – PROJE VE TAAHHÜT</span>
+      </div>
     </div>
   </div>
   @endif
 
   <nav class="nav-glass{{ $isHome ? '' : ' nav--inner' }}">
     <div class="container nav-glass__inner">
-      <a href="{{ url(app()->getLocale() === 'tr' ? 'tr' : 'en') }}" class="nav-glass__logo" style="display: flex; align-items: center; gap: 0.5rem; z-index: 1002;">
-        <img src="{{ asset('images/logo.png') }}" alt="Setisan Logo" style="height: 1.2em; width: auto; object-fit: contain;">
-        <span>SETISAN<span style="color: var(--accent);">.</span></span>
+      <a href="{{ url(app()->getLocale() === 'tr' ? 'tr' : 'en') }}" class="nav-glass__logo" style="display: flex; align-items: center; gap: 0.6rem; z-index: 1002; text-decoration: none;">
+        <img src="{{ asset('images/logo.png') }}" alt="Setisan Logo" style="height: 2.2rem; width: auto; object-fit: contain;">
+        <div style="display: flex; flex-direction: column; text-align: left; line-height: 1.1;">
+          <span style="font-size: 1.5rem; font-weight: 800; letter-spacing: -0.04em; color: inherit;">SETISAN<span style="color: var(--accent);">.</span></span>
+          <span style="font-size: 0.52rem; font-weight: 600; letter-spacing: 0.16em; text-transform: uppercase; color: inherit; opacity: 0.85; margin-top: 0.15rem; white-space: nowrap;">ELEKTROMEKANİK – PROJE VE TAAHHÜT</span>
+        </div>
       </a>
 
       <button class="mobile-toggle" aria-label="Toggle Menu">
@@ -68,17 +74,24 @@
         </div>
         <div class="nav-glass__actions" style="display: flex; align-items: center; gap: 1.5rem;">
           @php
-            $path = request()->path();
-            $pathTr = preg_replace('/^en/', 'tr', $path);
-            if (!str_starts_with($pathTr, 'tr')) $pathTr = 'tr/' . ltrim($pathTr, '/');
+            $routeName = Route::currentRouteName();
+            $routeParams = Route::current() ? Route::current()->parameters() : [];
+            
+            $urlTr = url('tr');
+            $urlEn = url('en');
 
-            $pathEn = preg_replace('/^tr/', 'en', $path);
-            if (!str_starts_with($pathEn, 'en')) $pathEn = 'en/' . ltrim($pathEn, '/');
+            if ($routeName) {
+                $nameTr = preg_replace('/^en\./', 'tr.', $routeName);
+                $nameEn = preg_replace('/^tr\./', 'en.', $routeName);
+                
+                if (Route::has($nameTr)) $urlTr = route($nameTr, $routeParams);
+                if (Route::has($nameEn)) $urlEn = route($nameEn, $routeParams);
+            }
           @endphp
           <div class="nav-glass__lang" style="display:flex; gap:0.5rem; align-items:center;">
-            <a href="{{ url($pathTr) }}" class="lang-link {{ app()->getLocale() === 'tr' ? 'active' : '' }}">TR</a>
+            <a href="{{ $urlTr }}" class="lang-link {{ app()->getLocale() === 'tr' ? 'active' : '' }}">TR</a>
             <span class="lang-separator">/</span>
-            <a href="{{ url($pathEn) }}" class="lang-link {{ app()->getLocale() === 'en' ? 'active' : '' }}">EN</a>
+            <a href="{{ $urlEn }}" class="lang-link {{ app()->getLocale() === 'en' ? 'active' : '' }}">EN</a>
           </div>
           <a href="{{ url(app()->getLocale() === 'tr' ? 'tr/iletisim' : 'en/contact') }}" class="nav-glass__cta">
             {{ app()->getLocale() === 'tr' ? 'Bize Ulaşın' : 'Contact Us' }}
@@ -94,9 +107,12 @@
 
   <footer class="footer-reveal">
     <div class="f-left">
-      <div class="f-logo" style="display: flex; align-items: center; gap: 0.5rem;">
-        <img src="{{ asset('images/logo.png') }}" alt="Setisan Logo" style="height: 1.2em; width: auto; object-fit: contain;">
-        <span>SETISAN<span style="color: var(--accent);">.</span></span>
+      <div class="f-logo" style="display: flex; align-items: center; gap: 0.6rem;">
+        <img src="{{ asset('images/logo.png') }}" alt="Setisan Logo" style="height: 2.2rem; width: auto; object-fit: contain;">
+        <div style="display: flex; flex-direction: column; text-align: left; line-height: 1.1;">
+          <span style="font-size: 1.5rem; font-weight: 800; letter-spacing: -0.04em; color: var(--white);">SETISAN<span style="color: var(--accent);">.</span></span>
+          <span style="font-size: 0.52rem; font-weight: 600; letter-spacing: 0.16em; text-transform: uppercase; color: inherit; opacity: 0.85; margin-top: 0.15rem; white-space: nowrap;">ELEKTROMEKANİK – PROJE VE TAAHHÜT</span>
+        </div>
       </div>
 
       <p class="f-desc">
@@ -104,7 +120,7 @@
       </p>
 
       <div class="f-contact-main">
-        <span>{{ app()->getLocale() === 'tr' ? 'Merkez Satış Ofisi' : 'Headquarters' }}</span>
+        <span>{{ app()->getLocale() === 'tr' ? 'Merkez Ofis' : 'Headquarters' }}</span>
         <strong><a href="tel:+902126036518" style="color: inherit; text-decoration: none;">+90 (212) 603 65 18</a></strong>
       </div>
     </div>
@@ -178,6 +194,12 @@
           <a href="{{ url(app()->getLocale() === 'tr' ? 'tr/projeler' : 'en/projects') }}">{{ app()->getLocale() === 'tr' ? 'Projeler/Referanslar' : 'Projects/References' }}</a>
           <a href="{{ url(app()->getLocale() === 'tr' ? 'tr/iletisim' : 'en/contact') }}">{{ app()->getLocale() === 'tr' ? 'Bize Ulaşın' : 'Contact Us' }}</a>
         </div>
+        <div class="f-col">
+          <h4>{{ app()->getLocale() === 'tr' ? 'Kurumsal & Yasal' : 'Corporate & Legal' }}</h4>
+          <a href="{{ route(app()->getLocale() . '.kvkk') }}">{{ app()->getLocale() === 'tr' ? 'KVKK Aydınlatma Metni' : 'KVKK Clarification Text' }}</a>
+          <a href="{{ route(app()->getLocale() . '.privacy') }}">{{ app()->getLocale() === 'tr' ? 'Gizlilik Politikası' : 'Privacy Policy' }}</a>
+          <a href="{{ route(app()->getLocale() . '.cookie') }}">{{ app()->getLocale() === 'tr' ? 'Çerez Politikası' : 'Cookie Policy' }}</a>
+        </div>
       </div>
 
       <div class="f-right-bot">
@@ -185,7 +207,7 @@
         @if(!empty($footerAddress))
         <div class="f-info">
           <h4>{{ app()->getLocale() === 'tr' ? 'Lokasyon' : 'Location' }}</h4>
-          <p>{{ $footerAddress }}</p>
+          <p><a href="https://www.google.com/maps/search/?api=1&query={{ urlencode($footerAddress) }}" target="_blank" rel="noopener" style="color: inherit; text-decoration: none;">{{ $footerAddress }}</a></p>
         </div>
         @endif
         @php $footerEmail = \App\Models\Setting::get('contact_email'); @endphp
@@ -210,6 +232,8 @@
         mobileToggle.addEventListener('click', () => {
           mobileToggle.classList.toggle('active');
           menuWrapper.classList.toggle('active');
+          const nav = document.querySelector('.nav-glass');
+          if(nav) nav.classList.toggle('menu-open');
         });
       }
     });
@@ -239,6 +263,7 @@
     });
   </script>
   {{-- Floating Video Widget --}}
+  <div class="video-backdrop" id="videoBackdrop" style="display: none;"></div>
   <div class="floating-video-widget" id="floatingVideoWidget" style="display: none;">
     <button id="videoCloseBtn" class="video-close-btn" aria-label="Close Video">&times;</button>
     <video id="promoVideo" class="promo-video" loop muted playsinline disablePictureInPicture oncontextmenu="return false;" preload="none">
@@ -258,12 +283,22 @@
         <path d="M19.07 4.93a10 10 0 0 1 0 14.14M15.54 8.46a5 5 0 0 1 0 7.07"></path>
       </svg>
     </button>
+    <button id="videoExpandBtn" class="video-expand-btn" aria-label="Expand Video">
+      <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/>
+      </svg>
+    </button>
   </div>
 
   <div class="floating-video-trigger" id="floatingVideoTrigger" aria-label="Open Video" style="display: flex;">
-    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-      <polygon points="5 3 19 12 5 21 5 3"></polygon>
-    </svg>
+    <div class="trigger-icon">
+      <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <polygon points="5 3 19 12 5 21 5 3"></polygon>
+      </svg>
+    </div>
+    <span class="trigger-text">
+      {{ app()->getLocale() === 'tr' ? 'Bizi Tanıyın' : 'Get to Know Us' }}
+    </span>
   </div>
 
   <style>
@@ -271,15 +306,17 @@
       position: fixed;
       bottom: 2rem;
       right: 2rem;
-      width: 280px;
-      height: 158px;
-      border-radius: 12px;
+      width: min(480px, calc(100vw - 4rem));
+      height: min(270px, calc((100vw - 4rem) * 9 / 16));
+      max-width: 480px;
+      max-height: 270px;
+      border-radius: 14px;
       overflow: hidden;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+      box-shadow: 0 16px 48px rgba(0,0,0,0.55);
       z-index: 9999;
       background: #000;
-      border: 2px solid rgba(255,255,255,0.1);
-      transition: transform 0.3s ease, width 0.3s ease, height 0.3s ease;
+      border: 2px solid rgba(255,255,255,0.12);
+      transition: transform 0.35s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.35s ease;
     }
 
     .promo-video {
@@ -287,6 +324,35 @@
       height: 100%;
       object-fit: cover;
       pointer-events: none;
+    }
+    
+    .video-backdrop {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.85);
+      backdrop-filter: blur(5px);
+      z-index: 9998;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.35s ease;
+    }
+    .video-backdrop.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+    
+    .floating-video-widget.theater-mode {
+      top: 50% !important;
+      left: 50% !important;
+      right: auto !important;
+      bottom: auto !important;
+      transform: translate(-50%, -50%) !important;
+      width: 90vw !important;
+      height: 50.625vw !important;
+      max-width: 1200px !important;
+      max-height: 675px !important;
+      z-index: 9999 !important;
+      border-radius: 12px;
     }
     
     .promo-video::-webkit-media-controls {
@@ -313,6 +379,31 @@
     }
 
     .video-mute-btn:hover {
+      background: rgba(0,0,0,0.8);
+      transform: scale(1.05);
+    }
+
+    .video-expand-btn {
+      position: absolute;
+      bottom: 0.75rem;
+      right: 3.5rem;
+      background: rgba(0,0,0,0.6);
+      border: 1px solid rgba(255,255,255,0.2);
+      color: #fff;
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      backdrop-filter: blur(4px);
+      transition: background 0.2s, transform 0.2s;
+      pointer-events: auto;
+      z-index: 2;
+    }
+
+    .video-expand-btn:hover {
       background: rgba(0,0,0,0.8);
       transform: scale(1.05);
     }
@@ -349,31 +440,66 @@
       position: fixed;
       bottom: 2rem;
       right: 2rem;
-      width: 56px;
-      height: 56px;
       background: var(--accent);
       color: #fff;
-      border-radius: 50%;
+      border-radius: 50px;
       display: flex;
       align-items: center;
-      justify-content: center;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+      gap: 0.75rem;
+      padding: 0.5rem 1.25rem 0.5rem 0.5rem;
+      box-shadow: 0 6px 20px rgba(23, 97, 155, 0.3);
       cursor: pointer;
       z-index: 9999;
-      transition: transform 0.3s ease, background 0.3s ease;
+      transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), background 0.3s ease, box-shadow 0.3s ease, opacity 0.4s ease;
+      text-decoration: none;
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+
+    .floating-video-trigger--hidden {
+      opacity: 0 !important;
+      transform: translateY(calc(100% + 2.5rem)) !important;
+      pointer-events: none !important;
     }
 
     .floating-video-trigger:hover {
-      transform: scale(1.1);
+      transform: scale(1.05) translateY(-3px);
       background: #b04e12;
+      box-shadow: 0 8px 25px rgba(176, 78, 18, 0.4);
+    }
+    
+    .floating-video-trigger .trigger-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.15);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background 0.3s ease;
+    }
+    
+    .floating-video-trigger:hover .trigger-icon {
+      background: rgba(255, 255, 255, 0.25);
+    }
+
+    .floating-video-trigger .trigger-text {
+      font-size: 0.8rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      white-space: nowrap;
+      color: #ffffff;
     }
 
     @media (max-width: 768px) {
       .floating-video-widget {
-        bottom: 1.5rem;
-        right: 1.5rem;
-        width: 180px;
-        height: 101px;
+        bottom: 1rem;
+        right: 1rem;
+        width: min(300px, calc(100vw - 2rem));
+        height: min(169px, calc((100vw - 2rem) * 9 / 16));
+        max-width: 300px;
+        max-height: 169px;
+        border-radius: 10px;
       }
       .video-mute-btn {
         width: 30px;
@@ -386,10 +512,22 @@
         height: 16px;
       }
       .floating-video-trigger {
-        bottom: 1.5rem;
-        right: 1.5rem;
-        width: 48px;
-        height: 48px;
+        bottom: 1rem;
+        right: 1rem;
+        width: 42px;
+        height: 42px;
+        padding: 0;
+        gap: 0;
+        border-radius: 50%;
+        justify-content: center;
+      }
+      .floating-video-trigger .trigger-icon {
+        width: 100%;
+        height: 100%;
+        background: transparent;
+      }
+      .floating-video-trigger .trigger-text {
+        display: none;
       }
       .video-close-btn {
         width: 24px;
@@ -410,21 +548,72 @@
       const closeBtn = document.getElementById('videoCloseBtn');
       const iconSoundOff = document.getElementById('icon-sound-off');
       const iconSoundOn = document.getElementById('icon-sound-on');
+      const expandBtn = document.getElementById('videoExpandBtn');
+      const backdrop = document.getElementById('videoBackdrop');
 
       let isVideoStarted = false;
+      let isVideoOpen = false;
+
+      // --- Scroll-hide logic ---
+      let lastScrollY = window.scrollY;
+      const SCROLL_THRESHOLD = 120; // px aşağı kaydırıldığında gizle
+
+      function updateTriggerVisibility() {
+        if (isVideoOpen || !trigger) return;
+        const currentY = window.scrollY;
+        const scrollingDown = currentY > lastScrollY;
+
+        if (scrollingDown && currentY > SCROLL_THRESHOLD) {
+          trigger.classList.add('floating-video-trigger--hidden');
+        } else {
+          trigger.classList.remove('floating-video-trigger--hidden');
+        }
+        lastScrollY = currentY;
+      }
+
+      window.addEventListener('scroll', updateTriggerVisibility, { passive: true });
+      // --- End scroll-hide logic ---
+      
+      let isTheaterMode = false;
+
+      function toggleTheaterMode(e) {
+        if(e) e.stopPropagation();
+        isTheaterMode = !isTheaterMode;
+        if (isTheaterMode) {
+          widget.classList.add('theater-mode');
+          backdrop.style.display = 'block';
+          requestAnimationFrame(() => backdrop.classList.add('active'));
+        } else {
+          widget.classList.remove('theater-mode');
+          backdrop.classList.remove('active');
+          setTimeout(() => { if(!isTheaterMode) backdrop.style.display = 'none'; }, 350);
+        }
+      }
 
       function closeVideoWidget() {
           if (widget) widget.style.display = 'none';
-          if (trigger) trigger.style.display = 'flex';
+          if (trigger) {
+            trigger.style.display = 'flex';
+            // Scroll'a göre yeniden değerlendir
+            isVideoOpen = false;
+            updateTriggerVisibility();
+          }
           if (video) {
               video.pause();
               video.currentTime = 0;
           }
+          if (isTheaterMode) {
+              toggleTheaterMode();
+          }
       }
 
       function openVideoWidget() {
+          isVideoOpen = true;
           if (widget) widget.style.display = 'block';
-          if (trigger) trigger.style.display = 'none';
+          if (trigger) {
+            trigger.style.display = 'none';
+            trigger.classList.remove('floating-video-trigger--hidden');
+          }
           
           if (video && !isVideoStarted) {
              const source = video.querySelector('source');
@@ -442,6 +631,8 @@
 
       if (closeBtn) closeBtn.addEventListener('click', closeVideoWidget);
       if (trigger) trigger.addEventListener('click', openVideoWidget);
+      if (expandBtn) expandBtn.addEventListener('click', toggleTheaterMode);
+      if (backdrop) backdrop.addEventListener('click', toggleTheaterMode);
 
       if(video && muteBtn) {
         muteBtn.addEventListener('click', (e) => {

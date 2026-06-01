@@ -53,25 +53,36 @@
             placeholder="0212 603 65 18">
         </div>
         <div class="form-group">
+          <label class="form-label">WhatsApp Business Telefon Numarası (Örn: 902126036518)</label>
+          <input type="text" name="contact_whatsapp" class="form-control"
+            value="{{ \App\Models\Setting::get('contact_whatsapp') }}"
+            placeholder="902126036518">
+        </div>
+      </div>
+
+            <div class="form-row">
+        <div class="form-group">
           <label class="form-label">E-posta</label>
           <input type="email" name="contact_email" class="form-control"
             value="{{ \App\Models\Setting::get('contact_email', 'info@setisan.com') }}"
             placeholder="info@setisan.com">
         </div>
-      </div>
-
-            <div class="form-row">
         <div class="form-group">
           <label class="form-label">Web Adresi</label>
           <input type="text" name="contact_web" class="form-control"
             value="{{ \App\Models\Setting::get('contact_web', 'www.setisan.com') }}"
             placeholder="www.setisan.com">
         </div>
+      </div>
+
+            <div class="form-row">
         <div class="form-group">
           <label class="form-label">Çalışma Saatleri</label>
           <input type="text" name="contact_working_hours" class="form-control"
             value="{{ \App\Models\Setting::get('contact_working_hours', 'Pzt – Cum: 08:30 – 18:00') }}"
             placeholder="Pzt – Cum: 08:30 – 18:00">
+        </div>
+        <div class="form-group">
         </div>
       </div>
 

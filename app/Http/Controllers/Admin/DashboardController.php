@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Admin;
 use App\Http\Controllers\Controller;
 use App\Models\Service;
 use App\Models\Project;
-use App\Models\BlogPost;
+
 use App\Models\ContactMessage;
 
 class DashboardController extends Controller
@@ -15,7 +15,6 @@ class DashboardController extends Controller
         $stats = [
             'services'  => Service::count(),
             'projects'  => Project::count(),
-            'posts'     => BlogPost::count(),
             'messages'  => ContactMessage::where('is_read', false)->count(),
         ];
 

@@ -13,11 +13,33 @@ class Project extends Model
     use HasSlug;
 
     protected $fillable = [
-        'slug', 'cover_image', 'service_id', 'location_tr', 'location_en',
-        'year', 'status', 'is_featured', 'is_active', 'order_index',
-        'title_tr', 'scope_tr', 'description_tr', 'meta_title_tr', 'meta_desc_tr',
-        'title_en', 'scope_en', 'description_en', 'meta_title_en', 'meta_desc_en',
-        'client_tr', 'client_en', 'size_tr', 'size_en', 'duration_tr', 'duration_en',
+        'slug',
+        'cover_image',
+        'service_id',
+        'sector_id',
+        'location_tr',
+        'location_en',
+        'year',
+        'status',
+        'is_featured',
+        'is_active',
+        'order_index',
+        'title_tr',
+        'scope_tr',
+        'description_tr',
+        'meta_title_tr',
+        'meta_desc_tr',
+        'title_en',
+        'scope_en',
+        'description_en',
+        'meta_title_en',
+        'meta_desc_en',
+        'client_tr',
+        'client_en',
+        'size_tr',
+        'size_en',
+        'duration_tr',
+        'duration_en',
     ];
 
     protected $casts = [
@@ -35,6 +57,16 @@ class Project extends Model
     public function service(): BelongsTo
     {
         return $this->belongsTo(Service::class);
+    }
+
+    public function sector(): BelongsTo
+    {
+        return $this->belongsTo(ProjectSector::class, 'sector_id');
+    }
+
+    public function categories()
+    {
+        return $this->belongsToMany(ProjectCategory::class, 'project_project_category');
     }
 
     public function gallery(): HasMany

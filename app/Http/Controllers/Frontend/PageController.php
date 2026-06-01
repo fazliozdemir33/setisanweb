@@ -16,4 +16,14 @@ class PageController extends Controller
         return view('frontend.kvkk');
     }
 
+    public function privacyPolicy()
+    {
+        return view('frontend.privacy');
+    }
+
+    public function cookiePolicy()
+    {
+        return view('frontend.cookie');
+    }
+
 }

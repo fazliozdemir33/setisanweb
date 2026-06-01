@@ -13,6 +13,7 @@ class ContactController extends Controller
         $contactSettings = [
             'address'       => \App\Models\Setting::get('contact_address', 'Çobançeşme Mah. Sanayi Cad. Nish İstanbul B Blok Rezidans No: 44 İç Kapı No: 60 Bahçelievler / İstanbul'),
             'phone'         => \App\Models\Setting::get('contact_phone', '0212 603 65 18'),
+            'whatsapp'      => \App\Models\Setting::get('contact_whatsapp'),
             'email'         => \App\Models\Setting::get('contact_email', 'info@setisan.com'),
             'web'           => \App\Models\Setting::get('contact_web', 'www.setisan.com'),
             'working_hours' => \App\Models\Setting::get('contact_working_hours', 'Pzt – Cum: 08:30 – 18:00'),

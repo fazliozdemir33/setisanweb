@@ -10,17 +10,20 @@ class ServiceController extends Controller
 {
     public function index()
     {
-        $services = Service::orderBy('order_index')->get();
-        return view('admin.services.index', compact('services'));
+        // Load all parents with their children
+        $parents = Service::whereNull('parent_id')->orderBy('order_index')->with(['children' => fn($q) => $q->orderBy('order_index')])->get();
+        return view('admin.services.index', compact('parents'));
     }
 
     public function create()
     {
-        return view('admin.services.create');
+        $parentServices = Service::whereNull('parent_id')->orderBy('order_index')->get();
+        return view('admin.services.create', compact('parentServices'));
     }
 
     public function store(Request $request)
     {
+        \Illuminate\Support\Facades\Log::info('Service Store Payload:', $request->all());
         $data = $request->validate([
             'title_tr'      => 'required|string|max:255',
             'title_en'      => 'nullable|string|max:255',
@@ -33,9 +36,10 @@ class ServiceController extends Controller
             'meta_desc_tr'  => 'nullable|string',
             'meta_desc_en'  => 'nullable|string',
             'order_index'   => 'nullable|integer',
-            'is_active'     => 'nullable|boolean',
+            'parent_id'     => 'nullable|exists:services,id',
         ]);
         $data['is_active'] = $request->has('is_active');
+        if (empty($data['parent_id'])) $data['parent_id'] = null;
 
         if ($request->hasFile('cover_image')) {
             $data['cover_image'] = $request->file('cover_image')->store('services', 'public');
@@ -47,7 +51,8 @@ class ServiceController extends Controller
 
     public function edit(Service $hizmetler)
     {
-        return view('admin.services.edit', ['service' => $hizmetler]);
+        $parentServices = Service::whereNull('parent_id')->where('id', '!=', $hizmetler->id)->orderBy('order_index')->get();
+        return view('admin.services.edit', ['service' => $hizmetler, 'parentServices' => $parentServices]);
     }
 
     public function update(Request $request, Service $hizmetler)
@@ -64,8 +69,10 @@ class ServiceController extends Controller
             'meta_desc_tr'  => 'nullable|string',
             'meta_desc_en'  => 'nullable|string',
             'order_index'   => 'nullable|integer',
+            'parent_id'     => 'nullable|exists:services,id',
         ]);
         $data['is_active'] = $request->has('is_active');
+        if (empty($data['parent_id'])) $data['parent_id'] = null;
 
         if ($request->hasFile('cover_image')) {
             $data['cover_image'] = $request->file('cover_image')->store('services', 'public');

@@ -19,10 +19,10 @@
     <div class="grid-2" style="gap:clamp(3rem,6vw,8rem);align-items:center">
       <div>
         <div class="eyebrow reveal">{{ $isTr ? 'Biz Kimiz?' : 'Who We Are' }}</div>
-        <h2 class="reveal reveal--delay-1">{!! nl2br(e(\App\Models\Setting::get("page_hakkimizda_main_title") ?: ($isTr ? "Sahada Güçlü,\nMühendislikte Disiplinli" : "Strong in the Field,\nDisciplined in Engineering"))) !!}</h2>
+        <h2 class="reveal reveal--delay-1">{!! nl2br(e(\App\Models\Setting::get("page_hakkimizda_main_title") ?: ($isTr ? "Sahada Güçlü, Mühendislikte Disiplinli" : "Strong in the Field,\nDisciplined in Engineering"))) !!}</h2>
         <div class="reveal reveal--delay-2 prose" style="margin-top:1.5rem; color:var(--text-light); line-height:1.85;">
           @php
-            $defaultTr = "2017 yılında yurt içinde alt elektromekanik projelerin hayata geçirilmesi üzere kurulan SETİSAN, aslında 30 yıllık bir tecrübeye sahiptir. Kaliteli ve zamanında iş üretmeyi misyon edinen şirketimiz; kendi ihtisas alanlarında üst düzey profesyonellerden oluşan kadrosuyla, müşterilerimize en yüksek katma değeri rekabetçi fiyatlarla sunmaktadır.\n\nProfesyonel iş yaklaşımımız; insana, topluma ve çevreye saygı, dürüstlük, verimlilik ve müşteri odaklı çalışma bilincine dayanmaktadır. Bu sayede SETİSAN, Türkiye’nin sürekli gelişen ve büyüyen firmaları arasındaki yerini her zaman korumaktadır.";
+            $defaultTr = "2017 yılında yurt içinde elektromekanik projelerin hayata geçirilmesi üzere kurulan SETİSAN, aslında 30 yıllık bir tecrübeye sahiptir. Kaliteli ve zamanında iş üretmeyi misyon edinen şirketimiz; kendi ihtisas alanlarında üst düzey profesyonellerden oluşan kadrosuyla, müşterilerimize en yüksek katma değeri rekabetçi fiyatlarla sunmaktadır.\n\nProfesyonel iş yaklaşımımız; insana, topluma ve çevreye saygı, dürüstlük, verimlilik ve müşteri odaklı çalışma bilincine dayanmaktadır. Bu sayede SETİSAN, Türkiye’nin sürekli gelişen ve büyüyen firmaları arasındaki yerini her zaman korumaktadır.";
             
             $defaultEn = "Established in 2017 to realize electromechanical projects domestically, SETİSAN actually possesses 30 years of profound engineering experience. With a mission of producing high-quality work on time, our company offers the highest added value to our customers at competitive prices through our team of top-level professionals in their respective fields.\n\nOur professional approach is based on respect for people, society, and the environment, honesty, efficiency, and a customer-oriented mindset. Thanks to this, SETİSAN continues to maintain its position among Turkey's continuously developing and growing companies.";
             
@@ -41,36 +41,33 @@
 
 <section class="section--dark" style="padding:clamp(4rem,8vw,8rem) 0">
   <div class="container">
-    <div class="stats" style="border-color:rgba(255,255,255,.1)">
-      @php
-        $stats = [
-          [
-            \App\Models\Setting::get("page_hakkimizda_stat_1_val") ?: '30',
-            \App\Models\Setting::get("page_hakkimizda_stat_1_label") ?: ($isTr ? 'Yıllık Deneyim' : 'Years of Experience')
-          ],
-          [
-            \App\Models\Setting::get("page_hakkimizda_stat_2_val") ?: '200+',
-            \App\Models\Setting::get("page_hakkimizda_stat_2_label") ?: ($isTr ? 'Tamamlanan Proje' : 'Completed Projects')
-          ],
-          [
-            \App\Models\Setting::get("page_hakkimizda_stat_3_val") ?: '50+',
-            \App\Models\Setting::get("page_hakkimizda_stat_3_label") ?: ($isTr ? 'Kurumsal Müşteri' : 'Corporate Clients')
-          ],
-          [
-            \App\Models\Setting::get("page_hakkimizda_stat_4_val") ?: '100%',
-            \App\Models\Setting::get("page_hakkimizda_stat_4_label") ?: ($isTr ? 'Zamanında Teslim' : 'On-Time Delivery')
-          ]
-        ];
-      @endphp
-      @foreach($stats as $s)
-      <div class="stat">
-        <div class="stat__number">{{ $s[0] }}</div>
-        <div class="stat__label">{{ $s[1] }}</div>
+    @php
+      $stats = [
+        [
+          \App\Models\Setting::get("page_hakkimizda_stat_1_val") ?: '30',
+          \App\Models\Setting::get("page_hakkimizda_stat_1_label") ?: ($isTr ? 'Yıllık Deneyim' : 'Years of Experience')
+        ],
+        [
+          \App\Models\Setting::get("page_hakkimizda_stat_2_val") ?: '200+',
+          \App\Models\Setting::get("page_hakkimizda_stat_2_label") ?: ($isTr ? 'Tamamlanan Proje' : 'Completed Projects')
+        ],
+        [
+          \App\Models\Setting::get("page_hakkimizda_stat_3_val") ?: '50+',
+          \App\Models\Setting::get("page_hakkimizda_stat_3_label") ?: ($isTr ? 'Kurumsal Müşteri' : 'Corporate Clients')
+        ],
+      ];
+    @endphp
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:1.5rem;border:1px solid rgba(255,255,255,.1);border-radius:12px;overflow:hidden">
+      @foreach($stats as $i => $s)
+      <div style="padding:2.5rem 1.5rem;text-align:center;{{ $i < count($stats)-1 ? 'border-right:1px solid rgba(255,255,255,.1);' : '' }}">
+        <div style="font-size:3rem;font-weight:700;color:#fff;line-height:1;margin-bottom:.5rem">{{ $s[0] }}</div>
+        <div style="font-size:.85rem;font-weight:700;text-transform:uppercase;letter-spacing:.1em;color:rgba(255,255,255,.6)">{{ $s[1] }}</div>
       </div>
       @endforeach
     </div>
   </div>
 </section>
+
 
 <section class="section section--surface">
   <div class="container">
@@ -111,7 +108,7 @@
   <div class="container">
     <div class="section-header section-header--center reveal">
       <div class="eyebrow">{{ $isTr ? 'Kalite & Güvence' : 'Quality & Assurance' }}</div>
-      <h2>{{ $isTr ? 'Sertifikalar ve Yetki Belgeleri' : 'Certificates & Authorizations' }}</h2>
+      <h2>{{ $isTr ? 'Kalite ve Yönetim Sistemi Sertifikalarımız' : 'Quality & Management System Certificates' }}</h2>
     </div>
     
     <div class="grid-3 reveal reveal-delay-1" style="gap: 2rem; display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));">
@@ -157,6 +154,7 @@
   color: var(--dark);
   transition: all 0.3s ease;
   height: 100%;
+  align-self: stretch;
 }
 .cert-card:hover {
   transform: translateY(-5px);
@@ -186,6 +184,8 @@
   display: block;
 }
 .cert-card__content {
+  display: flex;
+  flex-direction: column;
   flex: 1;
   padding: 2rem;
 }
@@ -199,6 +199,8 @@
   font-size: 0.9rem;
   color: var(--muted);
   line-height: 1.6;
+  flex-grow: 1;
+  margin-bottom: 0;
 }
 </style>
 

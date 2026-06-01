@@ -65,11 +65,6 @@
             <input type="text" name="settings[stat_3_val][{{ $lang }}]" class="form-control" placeholder="Rakam (Örn: 50+)" value="{{ \App\Models\Setting::where('key', "page_{$key}_stat_3_val")->first()->{"value_{$lang}"} ?? '' }}" style="margin-bottom:.5rem;">
             <input type="text" name="settings[stat_3_label][{{ $lang }}]" class="form-control" placeholder="Etiket (Örn: Kurumsal Müşteri)" value="{{ \App\Models\Setting::where('key', "page_{$key}_stat_3_label")->first()->{"value_{$lang}"} ?? '' }}">
           </div>
-          <div class="form-group">
-            <label class="form-label">Veri 4 (Örn: 100% Zamanında Teslim)</label>
-            <input type="text" name="settings[stat_4_val][{{ $lang }}]" class="form-control" placeholder="Rakam (Örn: 100%)" value="{{ \App\Models\Setting::where('key', "page_{$key}_stat_4_val")->first()->{"value_{$lang}"} ?? '' }}" style="margin-bottom:.5rem;">
-            <input type="text" name="settings[stat_4_label][{{ $lang }}]" class="form-control" placeholder="Etiket (Örn: Zamanında Teslim)" value="{{ \App\Models\Setting::where('key', "page_{$key}_stat_4_label")->first()->{"value_{$lang}"} ?? '' }}">
-          </div>
         </div>
         <h4 style="margin-bottom: 1rem; color: var(--primary);">İletişim Banner Alanı (En Alt Kısım)</h4>
         <div class="form-group">
@@ -85,10 +80,10 @@
 
       <div style="padding: 1.5rem; border-top: 1px solid var(--border);">
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
-          <h4 style="margin: 0; color: var(--primary);">Sertifikalar ve Yetki Belgeleri</h4>
+          <h4 style="margin: 0; color: var(--primary);">Kalite ve Yönetim Sistemi Sertifikalarımız</h4>
           <button type="button" class="btn btn--sm btn--primary" onclick="document.getElementById('certModal').style.display='flex'">+ Yeni Sertifika Ekle</button>
         </div>
-        
+
         @php
           $certsSetting = \App\Models\Setting::get("page_hakkimizda_certificates");
           $certs = $certsSetting ? json_decode($certsSetting, true) : [];
@@ -107,11 +102,11 @@
             </div>
             <div style="padding: 0.75rem;">
               <h5 style="margin: 0 0 0.5rem 0; font-size: 0.9rem;">{{ $cert['title_tr'] }}</h5>
-              <form action="{{ route('admin.pages.delete_certificate', ['key' => $key, 'index' => $index]) }}" method="POST" onsubmit="return confirm('Silmek istediğinize emin misiniz?');">
-                @csrf
-                @method('DELETE')
-                <button type="submit" class="btn btn--sm btn--danger" style="width: 100%; padding: 0.25rem;">Sil</button>
-              </form>
+              {{-- Silme butonu: ana form DIŞINDA ayrı form --}}
+              <button type="button"
+                class="btn btn--sm btn--danger"
+                style="width: 100%; padding: 0.25rem;"
+                onclick="deleteCert({{ $index }})">Sil</button>
             </div>
           </div>
           @endforeach
@@ -131,7 +126,7 @@
           <div class="form-tab" onclick="switchTab('en',this)">🇬🇧 English</div>
         </div>
       </div>
-      
+
       @foreach(['tr', 'en'] as $lang)
       <div id="tab-{{ $lang }}" style="display: {{ $lang == 'tr' ? 'block' : 'none' }}; padding: 1.5rem;">
         <div class="form-row">
@@ -151,11 +146,6 @@
             <label class="form-label">Veri 3 (Örn: 50.000m² Toplam Alan)</label>
             <input type="text" name="settings[stat_3_val][{{ $lang }}]" class="form-control" placeholder="Rakam (Örn: 50.000)" value="{{ \App\Models\Setting::where('key', "page_{$key}_stat_3_val")->first()->{"value_{$lang}"} ?? '' }}" style="margin-bottom:.5rem;">
             <input type="text" name="settings[stat_3_label][{{ $lang }}]" class="form-control" placeholder="Etiket (Örn: m² Alan)" value="{{ \App\Models\Setting::where('key', "page_{$key}_stat_3_label")->first()->{"value_{$lang}"} ?? '' }}">
-          </div>
-          <div class="form-group">
-            <label class="form-label">Veri 4 (Örn: 100MW Kurulu Güç)</label>
-            <input type="text" name="settings[stat_4_val][{{ $lang }}]" class="form-control" placeholder="Rakam (Örn: 100)" value="{{ \App\Models\Setting::where('key', "page_{$key}_stat_4_val")->first()->{"value_{$lang}"} ?? '' }}" style="margin-bottom:.5rem;">
-            <input type="text" name="settings[stat_4_label][{{ $lang }}]" class="form-control" placeholder="Etiket (Örn: MW Kurulu Güç)" value="{{ \App\Models\Setting::where('key', "page_{$key}_stat_4_label")->first()->{"value_{$lang}"} ?? '' }}">
           </div>
         </div>
       </div>
@@ -185,10 +175,18 @@
         </div>
       </div>
     @endif
-    
+
     <button type="submit" class="btn btn--primary">Değişiklikleri Kaydet</button>
   </form>
 </div>
+
+{{-- Sertifika silme formu — Ana formun DIŞINDA (iç içe form HTML hatası önlenir) --}}
+@if($key === 'hakkimizda')
+<form id="cert-delete-form" method="POST" style="display:none">
+  @csrf
+  @method('DELETE')
+</form>
+@endif
 
 @push('scripts')
 <script>
@@ -198,6 +196,14 @@ function switchTab(lang, el) {
   document.getElementById('tab-' + lang).style.display = 'block';
   el.classList.add('active');
 }
+
+function deleteCert(index) {
+  if (!confirm('Bu sertifikayı silmek istediğinizden emin misiniz?')) return;
+  const form = document.getElementById('cert-delete-form');
+  if (!form) return;
+  form.action = '/yonetim/sayfalar/{{ $key }}/sertifika/' + index;
+  form.submit();
+}
 </script>
 
 <!-- Certificate Add Modal -->
@@ -205,37 +211,38 @@ function switchTab(lang, el) {
   <div style="background: var(--white); padding: 2rem; border-radius: var(--radius); width: 100%; max-width: 500px; position: relative;">
     <button type="button" onclick="document.getElementById('certModal').style.display='none'" style="position: absolute; top: 1rem; right: 1rem; background: none; border: none; font-size: 1.5rem; cursor: pointer; color: var(--muted);">&times;</button>
     <h3 style="margin-top: 0; margin-bottom: 1.5rem; font-size: 1.25rem;">Yeni Sertifika / Belge Ekle</h3>
-    
+
     <form action="{{ route('admin.pages.add_certificate', $key) }}" method="POST" enctype="multipart/form-data">
       @csrf
       <div class="form-group">
         <label class="form-label">Sertifika Görseli (Zorunlu)</label>
         <input type="file" name="image" class="form-control" accept="image/*,application/pdf" required>
       </div>
-      
+
       <div class="form-group">
         <label class="form-label">Sertifika Adı (TR)</label>
         <input type="text" name="title_tr" class="form-control" required placeholder="Örn: ISO 9001 Kalite Belgesi">
       </div>
-      
+
       <div class="form-group">
         <label class="form-label">Sertifika Adı (EN)</label>
         <input type="text" name="title_en" class="form-control" placeholder="Örn: ISO 9001 Quality Certificate">
       </div>
-      
+
       <div class="form-group">
         <label class="form-label">Açıklama (TR) - İsteğe Bağlı</label>
         <textarea name="desc_tr" class="form-control" rows="2" placeholder="Örn: Kalite ve Çevre Yönetim Sistemi"></textarea>
       </div>
-      
+
       <div class="form-group">
         <label class="form-label">Açıklama (EN) - İsteğe Bağlı</label>
         <textarea name="desc_en" class="form-control" rows="2" placeholder="Örn: Quality and Environment Management System"></textarea>
       </div>
-      
+
       <button type="submit" class="btn btn--primary" style="width: 100%;">Ekle</button>
     </form>
   </div>
 </div>
 @endpush
 @endsection
+

@@ -11,6 +11,10 @@ use App\Http\Controllers\Admin\SettingController;
 use App\Http\Controllers\Admin\MediaController;
 use App\Http\Controllers\Admin\MessageController;
 use App\Http\Controllers\Admin\ProfileController;
+use App\Http\Controllers\Admin\SectorController;
+use App\Http\Controllers\Admin\SolutionPartnerController;
+use App\Http\Controllers\Admin\HomepageProjectController;
+use App\Http\Controllers\Admin\ProjectCategoryController;
 
 Route::prefix('yonetim')->name('admin.')->group(function () {
 
@@ -32,12 +36,30 @@ Route::prefix('yonetim')->name('admin.')->group(function () {
             'store' => 'projects.store', 'edit' => 'projects.edit',
             'update' => 'projects.update', 'destroy' => 'projects.destroy',
         ]);
+        Route::post('projeler-sirala', [ProjectController::class, 'reorder'])->name('projects.reorder');
 
-        Route::resource('blog', BlogController::class)->names([
-            'index' => 'blog.index', 'create' => 'blog.create',
-            'store' => 'blog.store', 'edit' => 'blog.edit',
-            'update' => 'blog.update', 'destroy' => 'blog.destroy',
+        // Anasayfa proje yönetimi
+        Route::get('anasayfa-projeleri', [HomepageProjectController::class, 'index'])->name('homepage-projects.index');
+        Route::post('anasayfa-projeleri/{projeler}/toggle', [HomepageProjectController::class, 'toggle'])->name('homepage-projects.toggle');
+        Route::post('anasayfa-projeleri-sirala', [HomepageProjectController::class, 'reorder'])->name('homepage-projects.reorder');
+
+        Route::resource('sektorler', SectorController::class)->parameters([
+            'sektorler' => 'sector'
+        ])->names([
+            'index'   => 'sectors.index',  'create' => 'sectors.create',
+            'store'   => 'sectors.store',  'edit'   => 'sectors.edit',
+            'update'  => 'sectors.update', 'destroy'=> 'sectors.destroy',
         ]);
+
+        Route::resource('proje-kategorileri', ProjectCategoryController::class)->parameters([
+            'proje-kategorileri' => 'project_category'
+        ])->names([
+            'index'   => 'project-categories.index',  'create' => 'project-categories.create',
+            'store'   => 'project-categories.store',  'edit'   => 'project-categories.edit',
+            'update'  => 'project-categories.update', 'destroy'=> 'project-categories.destroy',
+        ]);
+
+
 
         Route::get('sayfalar/{key}/duzenle', [PageController::class, 'edit'])->name('pages.edit');
         Route::put('sayfalar/{key}', [PageController::class, 'update'])->name('pages.update');
@@ -51,6 +73,15 @@ Route::prefix('yonetim')->name('admin.')->group(function () {
             'store' => 'partners.store', 'edit' => 'partners.edit',
             'update' => 'partners.update', 'destroy' => 'partners.destroy',
         ]);
+
+        Route::resource('cozum-ortaklari-marka', SolutionPartnerController::class)->parameters([
+            'cozum-ortaklari-marka' => 'solutionPartner'
+        ])->names([
+            'index'   => 'solution-partners.index',  'create' => 'solution-partners.create',
+            'store'   => 'solution-partners.store',  'edit'   => 'solution-partners.edit',
+            'update'  => 'solution-partners.update', 'destroy'=> 'solution-partners.destroy',
+        ]);
+        Route::post('cozum-ortaklari-marka/{solutionPartner}/toggle', [SolutionPartnerController::class, 'toggle'])->name('solution-partners.toggle');
 
         Route::get('ayarlar', [SettingController::class, 'index'])->name('settings.index');
         Route::post('ayarlar', [SettingController::class, 'update'])->name('settings.update');

@@ -31,6 +31,19 @@
           </div>
         </div>
         <div class="form-group">
+          <label class="form-label">Üst Hizmet (Alt hizmet oluşturmak için seçin)</label>
+          <select name="parent_id" class="form-control">
+            <option value="">— Ana Hizmet (Üst Yok) —</option>
+            @foreach($parentServices as $p)
+              <option value="{{ $p->id }}" {{ old('parent_id', $service->parent_id ?? '') == $p->id ? 'selected' : '' }}>
+                {{ $p->title_tr }}
+              </option>
+            @endforeach
+          </select>
+          <small style="color:var(--muted); margin-top:.35rem; display:block">Boş bırakırsanız bu hizmet ana hizmet olarak oluşturulur.</small>
+        </div>
+
+        <div class="form-group">
           <label class="form-label">Kapak Görseli</label>
           <input type="file" name="cover_image" class="form-control" accept="image/*">
           @if(isset($service) && $service->cover_image)

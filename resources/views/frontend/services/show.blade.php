@@ -35,7 +35,46 @@
   </div>
 </section>
 
+{{-- ── Alt Hizmetler (children) ── --}}
+@if($children->count())
+<section class="section" style="background: var(--surface); padding-top: 4rem; padding-bottom: 5rem;">
+  <div class="container">
+    <div class="section-header reveal" style="margin-bottom: 3rem;">
+      <div class="eyebrow">{{ $isTr ? 'Alt Hizmetler' : 'Sub-Services' }}</div>
+      <h2>{{ $isTr ? 'Bu Başlık Altındaki Hizmetlerimiz' : 'Services Under This Category' }}</h2>
+    </div>
+    <div class="sub-service-grid">
+      @foreach($children as $i => $child)
+      <a href="{{ url(($isTr ? 'tr/hizmetler' : 'en/services') . '/' . $service->slug . '/' . $child->slug) }}"
+         class="sub-service-card reveal" style="transition-delay: {{ $i * 0.07 }}s; text-decoration: none;">
+        @if($child->cover_image)
+        <div class="sub-service-card__img">
+          <img src="{{ asset('storage/' . $child->cover_image) }}" alt="{{ $child->title }}" loading="lazy">
+        </div>
+        @else
+        <div class="sub-service-card__img sub-service-card__img--placeholder">
+          <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+            <circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/>
+          </svg>
+        </div>
+        @endif
+        <div class="sub-service-card__body">
+          <div class="sub-service-card__num">{{ str_pad($i + 1, 2, '0', STR_PAD_LEFT) }}</div>
+          <h3 class="sub-service-card__title">{{ $child->title }}</h3>
+          @if($child->excerpt)
+          <p class="sub-service-card__desc">{{ $child->excerpt }}</p>
+          @endif
+          <span class="sub-service-card__arrow">{{ $isTr ? 'Detayı İncele' : 'View Detail' }} →</span>
+        </div>
+      </a>
+      @endforeach
+    </div>
+  </div>
+</section>
+@endif
+
 @if($relatedProjects->count())
+
 <section class="section section--surface">
   <div class="container">
     <div class="section-header reveal">
@@ -44,18 +83,69 @@
     </div>
     <div class="project-grid">
       @foreach($relatedProjects as $i => $project)
-      <a href="{{ url(($isTr ? 'tr/projeler' : 'en/projects') . '/' . $project->slug) }}" class="project-card reveal" style="transition-delay:{{ $i * 0.1 }}s">
-        <img src="{{ $project->cover_image ? asset('storage/' . $project->cover_image) : asset('images/extracted/stitched_page_13.jpg') }}" alt="{{ $project->title }}" loading="lazy">
-        <div class="project-card__overlay">
-          <div class="project-card__meta">{{ $project->location }} · {{ $project->year }}</div>
-          <h3 class="project-card__title">{{ $project->title }}</h3>
+      <div class="flip-card-wrapper reveal"
+           style="transition-delay:{{ $i * 0.1 }}s"
+           data-href="{{ url(($isTr ? 'tr/projeler' : 'en/projects') . '/' . $project->slug) }}">
+        <div class="flip-card-inner">
+
+          {{-- FRONT --}}
+          <div class="flip-card-front">
+            <img src="{{ $project->cover_image ? asset('storage/' . $project->cover_image) : asset('images/extracted/stitched_page_13.jpg') }}" alt="{{ $project->title }}" loading="lazy">
+            <div class="project-card__overlay">
+              <div class="project-card__meta">{{ $project->location }} · {{ $project->year }}</div>
+              <h3 class="project-card__title">{{ $project->title }}</h3>
+            </div>
+          </div>
+
+          {{-- BACK --}}
+          <div class="flip-card-back">
+            @if($project->service)
+              <span class="flip-card-back__tag">{{ $project->service->title }}</span>
+            @endif
+            <div class="flip-card-back__title">{{ $project->title }}</div>
+            <div class="flip-card-back__divider"></div>
+            <div class="flip-card-back__info">
+              @if($project->client)
+              <div class="flip-card-back__row">
+                <span class="flip-card-back__label">{{ $isTr ? 'İşveren' : 'Client' }}</span>
+                <span class="flip-card-back__value">{{ $project->client }}</span>
+              </div>
+              @endif
+              @if($project->scope)
+              <div class="flip-card-back__row">
+                <span class="flip-card-back__label">{{ $isTr ? 'Kapsam' : 'Scope' }}</span>
+                <span class="flip-card-back__value">{{ $project->scope }}</span>
+              </div>
+              @endif
+              @if($project->duration)
+              <div class="flip-card-back__row">
+                <span class="flip-card-back__label">{{ $isTr ? 'Süre' : 'Duration' }}</span>
+                <span class="flip-card-back__value">{{ $project->duration }}</span>
+              </div>
+              @elseif($project->year)
+              <div class="flip-card-back__row">
+                <span class="flip-card-back__label">{{ $isTr ? 'Yıl' : 'Year' }}</span>
+                <span class="flip-card-back__value">{{ $project->year }}</span>
+              </div>
+              @endif
+            </div>
+            @if($project->description)
+              <div class="flip-card-back__desc">{{ $project->description }}</div>
+            @endif
+            <a href="{{ url(($isTr ? 'tr/projeler' : 'en/projects') . '/' . $project->slug) }}"
+               class="flip-card-back__btn">
+              {{ $isTr ? 'Detayları Gör' : 'View Details' }} →
+            </a>
+          </div>
+
         </div>
-      </a>
+      </div>
       @endforeach
     </div>
   </div>
 </section>
 @endif
+
 
 @if($otherServices->count())
 <section class="section section--surface2">
@@ -82,3 +172,26 @@
 </section>
 @endif
 @endsection
+
+@push('scripts')
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  const isMobile = () => window.matchMedia('(hover: none)').matches;
+  document.querySelectorAll('.flip-card-wrapper').forEach(card => {
+    card.addEventListener('click', (e) => {
+      if (!isMobile()) return;
+      if (e.target.closest('.flip-card-back__btn')) return;
+      if (!card.classList.contains('flipped')) {
+        e.preventDefault();
+        document.querySelectorAll('.flip-card-wrapper.flipped').forEach(other => {
+          if (other !== card) other.classList.remove('flipped');
+        });
+        card.classList.add('flipped');
+      } else {
+        card.classList.remove('flipped');
+      }
+    });
+  });
+});
+</script>
+@endpush

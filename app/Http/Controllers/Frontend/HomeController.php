@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\Service;
 use App\Models\Project;
 use App\Models\BlogPost;
+use App\Models\SolutionPartner;
 
 class HomeController extends Controller
 {
@@ -13,9 +14,12 @@ class HomeController extends Controller
     {
         $locale = app()->getLocale();
 
-        $services = Service::active()->get();
-        $featuredProjects = Project::active()->with('service')
-            ->orderByDesc('year')->get();
+        $services = Service::active()->parents()->get();
+        $featuredProjects = Project::active()->featured()->with('sector')
+            ->orderBy('order_index')->orderByDesc('year')->get();
+        
+        $projectSectors = $featuredProjects->pluck('sector')->filter()->unique('id')->sortBy('order_index');
+        
         $latestPosts = BlogPost::published()->limit(3)->get();
 
         $stats = [];
@@ -36,9 +40,10 @@ class HomeController extends Controller
         }
 
         $partners = \App\Models\Partner::where('is_active', true)->orderBy('order_index')->get();
+        $solutionPartners = SolutionPartner::active()->orderBy('order_index')->get();
 
         return view('frontend.home', compact(
-            'services', 'featuredProjects', 'latestPosts', 'stats', 'locale', 'partners'
+            'services', 'projectSectors', 'featuredProjects', 'latestPosts', 'stats', 'locale', 'partners', 'solutionPartners'
         ));
     }
 }

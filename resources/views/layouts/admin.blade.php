@@ -118,11 +118,21 @@
     <a href="{{ route('admin.projects.index') }}" class="sidebar__link {{ request()->routeIs('admin.projects*') ? 'active' : '' }}">
       <span class="sidebar__link-icon">◈</span> Projeler
     </a>
-    <a href="{{ route('admin.blog.index') }}" class="sidebar__link {{ request()->routeIs('admin.blog*') ? 'active' : '' }}">
-      <span class="sidebar__link-icon">✎</span> Blog / Haberler
+    <a href="{{ route('admin.homepage-projects.index') }}" class="sidebar__link {{ request()->routeIs('admin.homepage-projects*') ? 'active' : '' }}" style="padding-left:2.25rem;font-size:.82rem">
+      <span class="sidebar__link-icon" style="font-size:.7rem">↳</span> Anasayfa Projeleri
     </a>
+    <a href="{{ route('admin.sectors.index') }}" class="sidebar__link {{ request()->routeIs('admin.sectors*') ? 'active' : '' }}">
+      <span class="sidebar__link-icon">⊟</span> Proje Sektörleri
+    </a>
+    <a href="{{ route('admin.project-categories.index') }}" class="sidebar__link {{ request()->routeIs('admin.project-categories*') ? 'active' : '' }}">
+      <span class="sidebar__link-icon">🏷️</span> Proje Etiketleri / Kategorileri
+    </a>
+
     <a href="{{ route('admin.partners.index') }}" class="sidebar__link {{ request()->routeIs('admin.partners*') ? 'active' : '' }}">
       <span class="sidebar__link-icon">★</span> Referanslar
+    </a>
+    <a href="{{ route('admin.solution-partners.index') }}" class="sidebar__link {{ request()->routeIs('admin.solution-partners*') ? 'active' : '' }}">
+      <span class="sidebar__link-icon">⬡</span> Çözüm Ortakları
     </a>
 
     <div class="sidebar__group">Kurumsal Sayfalar</div>
@@ -168,6 +178,16 @@
     @endif
     @if(session('error'))
       <div class="alert alert--error">✕ {{ session('error') }}</div>
+    @endif
+    @if($errors->any())
+      <div class="alert alert--error">
+        <strong style="display:block;margin-bottom:0.5rem">Lütfen aşağıdaki hataları düzeltin:</strong>
+        <ul style="margin-left: 1.5rem">
+          @foreach($errors->all() as $error)
+            <li>{{ $error }}</li>
+          @endforeach
+        </ul>
+      </div>
     @endif
 
     @yield('content')

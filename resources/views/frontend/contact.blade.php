@@ -24,8 +24,30 @@
 
         <span class="label">{{ $isTr ? 'İletişim Bilgileri' : 'Contact Information' }}</span>
 
-        @if(!empty($contactSettings['address']))
+        {{-- Firma Adı --}}
         <div class="contact-item" style="margin-top: 1.5rem;">
+          <div class="contact-item__icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="7" width="20" height="14" rx="2" ry="2"/><path d="M16 7V5a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v2"/></svg>
+          </div>
+          <div>
+            <div class="contact-item__label">{{ $isTr ? 'Firma Adı' : 'Brand Name' }}</div>
+            <div class="contact-item__val">Setisan Elektromekanik – Proje ve Taahhüt</div>
+          </div>
+        </div>
+
+        {{-- Ticaret Ünvanı --}}
+        <div class="contact-item">
+          <div class="contact-item__icon">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+          </div>
+          <div>
+            <div class="contact-item__label">{{ $isTr ? 'Ticaret Ünvanı' : 'Trade Name' }}</div>
+            <div class="contact-item__val" style="text-transform: uppercase; font-size: 0.82rem; letter-spacing: 0.03em;">SETİSAN ISITMA SOĞUTMA KLİMA VE ELEKTRİK SANAYİ TİCARET LİMİTED ŞİRKETİ</div>
+          </div>
+        </div>
+
+        @if(!empty($contactSettings['address']))
+        <div class="contact-item">
           <div class="contact-item__icon">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
           </div>
@@ -45,6 +67,24 @@
             <div class="contact-item__label">{{ $isTr ? 'Telefon' : 'Phone' }}</div>
             <div class="contact-item__val">
               <a href="tel:{{ preg_replace('/\D/', '', $contactSettings['phone']) }}">{{ $contactSettings['phone'] }}</a>
+            </div>
+          </div>
+        </div>
+        @endif
+
+        @if(!empty($contactSettings['whatsapp']))
+        <div class="contact-item" style="border-left: 4px solid #25D366; background: rgba(37, 211, 102, 0.03);">
+          <div class="contact-item__icon" style="color: #25D366;">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/>
+            </svg>
+          </div>
+          <div>
+            <div class="contact-item__label" style="color: #25D366; font-weight: 700;">WhatsApp Business</div>
+            <div class="contact-item__val">
+              <a href="https://wa.me/{{ preg_replace('/\D/', '', $contactSettings['whatsapp']) }}" target="_blank" rel="noopener" style="color: #25D366; font-weight: 700; text-decoration: underline;">
+                {{ $isTr ? 'WhatsApp ile Mesaj Gönderin' : 'Message us on WhatsApp' }}
+              </a>
             </div>
           </div>
         </div>

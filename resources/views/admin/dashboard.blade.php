@@ -14,11 +14,7 @@
     <div class="stat-card__num">{{ $stats['projects'] }}</div>
     <div class="stat-card__label">Proje</div>
   </div>
-  <div class="stat-card">
-    <div class="stat-card__icon">✎</div>
-    <div class="stat-card__num">{{ $stats['posts'] }}</div>
-    <div class="stat-card__label">Blog Yazısı</div>
-  </div>
+
   <div class="stat-card" style="border-color:{{ $stats['messages'] > 0 ? 'var(--a)' : 'var(--border)' }}">
     <div class="stat-card__icon">✉</div>
     <div class="stat-card__num" style="color:{{ $stats['messages'] > 0 ? 'var(--a)' : 'var(--p)' }}">{{ $stats['messages'] }}</div>
