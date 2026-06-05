@@ -4,14 +4,7 @@
     <div class="navbar__inner">
 
       <a href="{{ url($locale) }}" class="navbar__logo" aria-label="Setisan Elektromekanik Ana Sayfa">
-        @if(file_exists(public_path('images/logo.svg')))
-          <img src="{{ asset('images/logo.svg') }}" alt="Setisan Elektromekanik" height="38" loading="eager">
-        @else
-          <div>
-            <span class="navbar__logo-text">Setisan</span>
-            <span class="navbar__logo-sub">Elektromekanik</span>
-          </div>
-        @endif
+        <img src="{{ asset('images/logo.png') }}" alt="Setisan Elektromekanik" height="44" loading="eager" style="width: auto; object-fit: contain;">
       </a>
 
       <div class="navbar__nav" id="main-nav" role="menubar">

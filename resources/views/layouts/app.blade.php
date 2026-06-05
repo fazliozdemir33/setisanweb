@@ -33,24 +33,16 @@
 
   @if($isHome)
   <div id="app-preloader" class="preloader">
-    <div class="preloader__logo" id="preloader-logo" style="display: flex; align-items: center; gap: 0.6rem;">
-      <img src="{{ asset('images/logo.png') }}" alt="Setisan Logo" style="height: 2.2rem; width: auto; object-fit: contain;">
-      <div style="display: flex; flex-direction: column; text-align: left; line-height: 1.1;">
-        <span style="font-size: 1.5rem; font-weight: 800; letter-spacing: -0.04em; color: var(--white);">SETISAN<span style="color: var(--accent);">.</span></span>
-        <span style="font-size: 0.52rem; font-weight: 600; letter-spacing: 0.16em; text-transform: uppercase; color: inherit; opacity: 0.85; margin-top: 0.15rem; white-space: nowrap;">ELEKTROMEKANİK – PROJE VE TAAHHÜT</span>
-      </div>
+    <div class="preloader__logo" id="preloader-logo" style="display: flex; align-items: center;">
+      <img src="{{ asset('images/logo.png') }}" alt="Setisan Logo" style="height: 3.5rem; width: auto; object-fit: contain;">
     </div>
   </div>
   @endif
 
   <nav class="nav-glass{{ $isHome ? '' : ' nav--inner' }}">
     <div class="container nav-glass__inner">
-      <a href="{{ url(app()->getLocale() === 'tr' ? 'tr' : 'en') }}" class="nav-glass__logo" style="display: flex; align-items: center; gap: 0.6rem; z-index: 1002; text-decoration: none;">
-        <img src="{{ asset('images/logo.png') }}" alt="Setisan Logo" style="height: 2.2rem; width: auto; object-fit: contain;">
-        <div style="display: flex; flex-direction: column; text-align: left; line-height: 1.1;">
-          <span style="font-size: 1.5rem; font-weight: 800; letter-spacing: -0.04em; color: inherit;">SETISAN<span style="color: var(--accent);">.</span></span>
-          <span style="font-size: 0.52rem; font-weight: 600; letter-spacing: 0.16em; text-transform: uppercase; color: inherit; opacity: 0.85; margin-top: 0.15rem; white-space: nowrap;">ELEKTROMEKANİK – PROJE VE TAAHHÜT</span>
-        </div>
+      <a href="{{ url(app()->getLocale() === 'tr' ? 'tr' : 'en') }}" class="nav-glass__logo" style="display: flex; align-items: center; z-index: 1002; text-decoration: none;">
+        <img src="{{ asset('images/logo.png') }}" alt="Setisan Logo" style="height: 2.8rem; width: auto; object-fit: contain;">
       </a>
 
       <button class="mobile-toggle" aria-label="Toggle Menu">
@@ -107,22 +99,14 @@
 
   <footer class="footer-reveal">
     <div class="f-left">
-      <div class="f-logo" style="display: flex; align-items: center; gap: 0.6rem;">
-        <img src="{{ asset('images/logo.png') }}" alt="Setisan Logo" style="height: 2.2rem; width: auto; object-fit: contain;">
-        <div style="display: flex; flex-direction: column; text-align: left; line-height: 1.1;">
-          <span style="font-size: 1.5rem; font-weight: 800; letter-spacing: -0.04em; color: var(--white);">SETISAN<span style="color: var(--accent);">.</span></span>
-          <span style="font-size: 0.52rem; font-weight: 600; letter-spacing: 0.16em; text-transform: uppercase; color: inherit; opacity: 0.85; margin-top: 0.15rem; white-space: nowrap;">ELEKTROMEKANİK – PROJE VE TAAHHÜT</span>
-        </div>
+      <div class="f-logo" style="display: flex; align-items: center;">
+        <img src="{{ asset('images/logo.png') }}" alt="Setisan Logo" style="height: 3rem; width: auto; object-fit: contain; filter: brightness(0) invert(1);">
       </div>
 
       <p class="f-desc">
         {{ app()->getLocale() === 'tr' ? 'Endüstriyel tesisler ve kurumsal projeler için elektromekanik altyapıları, minimum hata anlayışıyla hayata geçiriyoruz. Setisan Elektromekanik olarak her projede; teknik mükemmellik, sürdürülebilirlik ve uzun vadeli verimliliği esas alıyor, güvenilir çözümler sunuyoruz.' : 'We bring electromechanical infrastructures for industrial facilities and corporate projects to life with a minimum-error approach. As Setisan Electromechanical, we base every project on technical excellence, sustainability, and long-term efficiency, providing reliable solutions.' }}
       </p>
 
-      <div class="f-contact-main">
-        <span>{{ app()->getLocale() === 'tr' ? 'Merkez Ofis' : 'Headquarters' }}</span>
-        <strong><a href="tel:+902126036518" style="color: inherit; text-decoration: none;">+90 (212) 603 65 18</a></strong>
-      </div>
     </div>
 
     <div class="f-right">
@@ -217,12 +201,18 @@
           <p><a href="mailto:{{ $footerEmail }}" style="color:inherit">{{ $footerEmail }}</a></p>
         </div>
         @endif
+        <div class="f-info">
+          <h4>{{ app()->getLocale() === 'tr' ? 'Telefon' : 'Phone' }}</h4>
+          <p><a href="tel:+902126036518" style="color:inherit">+90 (212) 603 65 18</a></p>
+        </div>
       </div>
     </div>
+
 
   </footer>
 
   <script src="{{ asset('js/app.js') }}"></script>
+  @stack('scripts')
   <script>
     document.addEventListener('DOMContentLoaded', () => {
       const mobileToggle = document.querySelector('.mobile-toggle');

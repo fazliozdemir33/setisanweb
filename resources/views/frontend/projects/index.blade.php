@@ -1,242 +1,559 @@
 @extends('layouts.app')
-@php $locale = app()->getLocale();
-$isTr = $locale === 'tr'; @endphp
+@php
+  $locale  = app()->getLocale();
+  $isTr    = $locale === 'tr';
+  $baseUrl = url($isTr ? 'tr/projeler' : 'en/projects');
+  $activeCount = (int)!!$currentStatus + (int)!!$currentFilter + (int)!!$currentCategory;
+@endphp
 
 @section('meta_title', $isTr ? 'Projeler & Referanslar — Setisan Elektromekanik' : 'Projects & References — Setisan Elektromekanik')
 @section('meta_desc', $isTr ? 'Tamamladığımız kurumsal mekanik ve elektrik projelerini inceleyin.' : 'Explore our completed institutional mechanical and electrical projects.')
 
 @section('content')
 
-  <div class="page-header">
-    <div class="container">
-
-      <h1>{{ $isTr ? 'Projeler & Referanslar' : 'Projects & References' }}</h1>
-      <p>
-        {{ $isTr ? 'Kurumsal ve sanayi yapılarında gerçekleştirdiğimiz elektromekanik projelerin seçkisi.' : 'A selection of electromechanical projects carried out in institutional and industrial buildings.' }}
-      </p>
-    </div>
+<div class="page-header">
+  <div class="container">
+    <h1>{{ $isTr ? 'Projeler & Referanslar' : 'Projects & References' }}</h1>
+    <p>{{ $isTr ? 'Kurumsal ve sanayi yapılarında gerçekleştirdiğimiz elektromekanik projelerin seçkisi.' : 'A selection of electromechanical projects carried out in institutional and industrial buildings.' }}</p>
   </div>
+</div>
 
-  <section class="section">
-    <div class="container">
+<section class="section">
+  <div class="container">
 
-      <div class="filter-tabs reveal">
-        <a href="{{ url($isTr ? 'tr/projeler' : 'en/projects') }}"
-          class="filter-tab {{ !$currentFilter ? 'active' : '' }}">
-          {{ $isTr ? 'Tümü' : 'All' }}
-        </a>
-        @foreach($sectors as $sec)
-          <a href="{{ url(($isTr ? 'tr/projeler' : 'en/projects') . '?sektor=' . $sec->slug) }}"
-            class="filter-tab {{ $currentFilter === $sec->slug ? 'active' : '' }}">
-            {{ $sec->name }}
-          </a>
-        @endforeach
+    {{-- NEW FILTER SYSTEM --}}
+    <div class="project-filter-section">
+      
+      {{-- Status Tabs --}}
+      <div class="project-tabs">
+        <button class="project-tab-btn active" data-status="completed">
+          <span class="project-tab-btn__dot"></span>
+          {{ $isTr ? 'Tamamlanan Projeler' : 'Completed Projects' }}
+        </button>
+        <button class="project-tab-btn" data-status="ongoing">
+          <span class="project-tab-btn__dot project-tab-btn__dot--ongoing"></span>
+          {{ $isTr ? 'Devam Eden Projeler' : 'Ongoing Projects' }}
+        </button>
       </div>
 
-      <div id="projects-container">
-        <div class="project-grid" style="transition: opacity 0.3s ease;">
-          @forelse($projects as $i => $project)
-            <div class="flip-card-wrapper reveal" style="transition-delay:{{ ($i % 3) * 0.1 }}s"
-              data-sector="{{ $project->sector?->slug }}"
-              data-href="{{ url(($isTr ? 'tr/projeler' : 'en/projects') . '/' . $project->slug) }}">
-              <div class="flip-card-inner">
-
-                {{-- FRONT --}}
-                <div class="flip-card-front">
-                  <img
-                    src="{{ $project->cover_image ? asset('storage/' . $project->cover_image) : asset('images/extracted/stitched_page_15.jpg') }}"
-                    alt="{{ $project->title }}" loading="lazy">
-                  <div class="project-card__overlay">
-                    <div style="display: flex; gap: 0.25rem; flex-wrap: wrap; margin-bottom: 0.5rem;">
-                      @if($project->sector)
-                        <span class="project-card__tag" style="margin:0">{{ $project->sector->name }}</span>
-                      @endif
-                      @foreach($project->categories as $cat)
-                        <span class="project-card__tag" style="margin:0; background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.2);">{{ $isTr ? $cat->name_tr : ($cat->name_en ?? $cat->name_tr) }}</span>
-                      @endforeach
-                    </div>
-                    <div class="project-card__meta">
-                      {{ $project->location }}
-                      @if($project->size) · {{ $project->size }} @endif
-                    </div>
-                    <h2 class="project-card__title">{{ $project->title }}</h2>
-                  </div>
-                </div>
-
-                {{-- BACK --}}
-                <div class="flip-card-back">
-                  <div style="display: flex; gap: 0.25rem; flex-wrap: wrap; justify-content: center; margin-bottom: 0.5rem;">
-                    @if($project->sector)
-                      <span class="flip-card-back__tag" style="margin:0">{{ $project->sector->name }}</span>
-                    @endif
-                    @foreach($project->categories as $cat)
-                      <span class="flip-card-back__tag" style="margin:0; background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.2);">{{ $isTr ? $cat->name_tr : ($cat->name_en ?? $cat->name_tr) }}</span>
-                    @endforeach
-                  </div>
-                  <div class="flip-card-back__title">{{ $project->title }}</div>
-                  <div class="flip-card-back__divider"></div>
-                  <div class="flip-card-back__info">
-                    @if($project->client)
-                      <div class="flip-card-back__row">
-                        <span class="flip-card-back__label">{{ $isTr ? 'İşveren' : 'Client' }}</span>
-                        <span class="flip-card-back__value">{{ $project->client }}</span>
-                      </div>
-                    @endif
-                    @if($project->scope)
-                      <div class="flip-card-back__row">
-                        <span class="flip-card-back__label">{{ $isTr ? 'Kapsam' : 'Scope' }}</span>
-                        <span class="flip-card-back__value">{{ $project->scope }}</span>
-                      </div>
-                    @endif
-                    @if($project->duration)
-                      <div class="flip-card-back__row">
-                        <span class="flip-card-back__label">{{ $isTr ? 'Süre' : 'Duration' }}</span>
-                        <span class="flip-card-back__value">{{ $project->duration }}</span>
-                      </div>
-                    @elseif($project->year)
-                      <div class="flip-card-back__row">
-                        <span class="flip-card-back__label">{{ $isTr ? 'Yıl' : 'Year' }}</span>
-                        <span class="flip-card-back__value">{{ $project->year }}</span>
-                      </div>
-                    @endif
-                  </div>
-                  @if($project->description)
-                    <div class="flip-card-back__desc">{{ $project->description }}</div>
-                  @endif
-                  <a href="{{ url(($isTr ? 'tr/projeler' : 'en/projects') . '/' . $project->slug) }}"
-                    class="flip-card-back__btn">
-                    {{ $isTr ? 'Detayları Gör' : 'View Details' }} →
-                  </a>
-                </div>
-
-              </div>
-            </div>
-          @empty
-            <div style="grid-column:1/-1;text-align:center;padding:4rem 0;color:var(--muted)">
-              {{ $isTr ? 'Henüz proje bulunmuyor.' : 'No projects found yet.' }}
-            </div>
-          @endforelse
+      {{-- Sector Filters --}}
+      @if($sectors->count())
+      <div class="project-sectors-wrapper">
+        <div class="project-sectors" id="project-sectors-list">
+          <button class="project-sector-btn active" data-sector="">
+            {{ $isTr ? 'Tüm Sektörler' : 'All Sectors' }}
+          </button>
+          @foreach($sectors as $sec)
+            <button class="project-sector-btn" data-sector="{{ $sec->slug }}">
+              {{ $sec->name }}
+            </button>
+          @endforeach
         </div>
+      </div>
+      @endif
 
-        @if($projects->hasPages())
-          <div class="projects-pagination" style="margin-top:3rem;display:flex;justify-content:center">
-            {{ $projects->links() }}
-          </div>
-        @endif
+      {{-- Category Filters --}}
+      <div class="project-categories-wrapper" id="project-categories-wrapper" style="display: none;">
+        <div class="project-categories" id="project-categories-list">
+          {{-- Populated dynamically via JS --}}
+        </div>
       </div>
 
     </div>
-  </section>
+
+    {{-- PROJECT GRID --}}
+    <div id="projects-container">
+      @include('frontend.projects._grid', ['projects' => $projects, 'isTr' => $isTr, 'baseUrl' => $baseUrl])
+    </div>
+
+  </div>
+</section>
+
+<style>
+/* ── Premium Tabbed Filter Styles ── */
+.project-filter-section {
+  margin-bottom: 3.5rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.75rem;
+}
+
+/* 1. Status Tabs */
+.project-tabs {
+  display: inline-flex;
+  justify-content: center;
+  align-self: center;
+  background: rgba(0, 0, 0, 0.03);
+  padding: 0.35rem;
+  border-radius: 50px;
+  border: 1px solid var(--border);
+  gap: 0.25rem;
+  position: relative;
+  z-index: 2;
+  margin-bottom: 0.5rem;
+}
+
+.project-tab-btn {
+  background: transparent;
+  border: none;
+  color: var(--muted);
+  font-family: inherit;
+  font-size: 0.9rem;
+  font-weight: 700;
+  padding: 0.8rem 2rem;
+  border-radius: 50px;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.65rem;
+  transition: all 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.project-tab-btn:hover {
+  color: var(--primary);
+}
+
+.project-tab-btn.active {
+  background: var(--primary);
+  color: var(--white);
+  box-shadow: 0 4px 15px rgba(27, 50, 82, 0.15);
+}
+
+.project-tab-btn__dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--accent);
+  display: inline-block;
+  transition: transform 0.3s ease;
+}
+
+.project-tab-btn__dot--ongoing {
+  background: #4ade80;
+  animation: tab-pulse 1.5s infinite;
+}
+
+@keyframes tab-pulse {
+  0%, 100% { transform: scale(1); opacity: 1; }
+  50% { transform: scale(1.3); opacity: 0.6; }
+}
+
+/* 2. Sector Buttons */
+.project-sectors-wrapper {
+  width: 100%;
+  overflow: hidden;
+  position: relative;
+}
+
+.project-sectors {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  padding: 0.25rem;
+}
+
+.project-sector-btn {
+  background: var(--white);
+  border: 1px solid var(--border);
+  color: var(--primary);
+  font-family: inherit;
+  font-size: 0.85rem;
+  font-weight: 600;
+  padding: 0.6rem 1.4rem;
+  border-radius: 30px;
+  cursor: pointer;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.project-sector-btn:hover {
+  border-color: var(--primary);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 10px rgba(0,0,0,0.03);
+}
+
+.project-sector-btn.active {
+  background: var(--primary);
+  border-color: var(--primary);
+  color: var(--white);
+  box-shadow: 0 4px 12px rgba(27, 50, 82, 0.12);
+}
+
+/* 3. Category Tags */
+.project-categories-wrapper {
+  background: #f8f9fb;
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 1.25rem 1.5rem;
+  transition: opacity 0.3s ease;
+}
+
+.project-categories {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.project-category-btn {
+  background: transparent;
+  border: 1.5px solid var(--border);
+  color: var(--muted);
+  font-family: inherit;
+  font-size: 0.78rem;
+  font-weight: 600;
+  padding: 0.4rem 1.1rem;
+  border-radius: 20px;
+  cursor: pointer;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.project-category-btn:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.project-category-btn.active {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--white);
+  box-shadow: 0 4px 10px rgba(180, 80, 20, 0.15);
+}
+
+/* 4. Loader and Cards */
+#projects-container {
+  min-height: 250px;
+}
+
+.flip-card-back__tag--ongoing {
+  background: rgba(74, 222, 128, 0.15) !important;
+  border-color: rgba(74, 222, 128, 0.4) !important;
+  color: #4ade80 !important;
+}
+
+.project-card__tag--ongoing {
+  background: rgba(74, 222, 128, 0.15) !important;
+  border-color: rgba(74, 222, 128, 0.4) !important;
+  color: #4ade80 !important;
+}
+
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .project-tabs {
+    width: 100%;
+    border-radius: 15px;
+    flex-direction: column;
+    padding: 0.5rem;
+  }
+  
+  .project-tab-btn {
+    width: 100%;
+    justify-content: center;
+    border-radius: 10px;
+    padding: 0.7rem 1.5rem;
+  }
+
+  .project-sectors {
+    justify-content: flex-start;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+    padding-bottom: 0.75rem;
+    scrollbar-width: none;
+    -webkit-overflow-scrolling: touch;
+  }
+  .project-sectors::-webkit-scrollbar {
+    display: none;
+  }
+  .project-sector-btn {
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+  .project-categories-wrapper {
+    padding: 1rem;
+  }
+}
+</style>
+
 @endsection
 
-
 @push('scripts')
-  <script>
-    document.addEventListener('DOMContentLoaded', () => {
-      const filterTabs = document.querySelectorAll('.filter-tab');
-      const isMobile = () => window.matchMedia('(hover: none)').matches;
+<script>
+document.addEventListener('DOMContentLoaded', () => {
+  const tabBtns = document.querySelectorAll('.project-tab-btn');
+  const sectorBtns = document.querySelectorAll('.project-sector-btn');
+  const categoriesList = document.getElementById('project-categories-list');
+  const categoriesWrapper = document.getElementById('project-categories-wrapper');
+  const container = document.getElementById('projects-container');
+  const cards = document.querySelectorAll('.flip-card-wrapper');
+  let emptyMessage = document.getElementById('projects-empty-message');
 
-      /* ── Mobile flip support: tap to flip, tap flipped-card link to navigate ── */
-      function attachFlipCardEvents() {
-        document.querySelectorAll('.flip-card-wrapper').forEach(card => {
-          card.addEventListener('click', (e) => {
-            if (!isMobile()) return; // Desktop: CSS hover handles it
-            const clickedBtn = e.target.closest('.flip-card-back__btn');
-            if (clickedBtn) return; // Let the link navigate normally
-            if (!card.classList.contains('flipped')) {
-              // First tap: flip the card
-              e.preventDefault();
-              // Close any other flipped cards
-              document.querySelectorAll('.flip-card-wrapper.flipped').forEach(other => {
-                if (other !== card) other.classList.remove('flipped');
-              });
-              card.classList.add('flipped');
-            } else {
-              // Second tap on the card body (not button): unflip
-              const clickedBackBtn = e.target.closest('.flip-card-back__btn');
-              if (!clickedBackBtn) {
-                card.classList.remove('flipped');
-              }
-            }
-          });
-        });
+  // Categories metadata passed from PHP to JS
+  const allCategories = [
+    @foreach($categories as $cat)
+    {
+      slug: "{{ $cat->slug }}",
+      name: {!! json_encode($isTr ? $cat->name_tr : ($cat->name_en ?? $cat->name_tr), JSON_UNESCAPED_UNICODE) !!}
+    },
+    @endforeach
+  ];
 
-        // Close flipped cards when tapping outside
-        document.addEventListener('click', (e) => {
-          if (!e.target.closest('.flip-card-wrapper')) {
-            document.querySelectorAll('.flip-card-wrapper.flipped').forEach(card => {
-              card.classList.remove('flipped');
-            });
-          }
-        }, { passive: true });
+  // Active state variables
+  let activeStatus = 'completed'; // default status
+  let activeSector = '';
+  let activeCategory = '';
+
+  // ── Initialize filters based on current state ──
+  function initFilters() {
+    // 1. Set active tab based on variable
+    tabBtns.forEach(btn => {
+      if (btn.dataset.status === activeStatus) {
+        btn.classList.add('active');
+      } else {
+        btn.classList.remove('active');
       }
+    });
 
-      function attachPaginationEvents() {
-        const paginationLinks = document.querySelectorAll('.projects-pagination a');
-        paginationLinks.forEach(link => {
-          link.addEventListener('click', (e) => {
-            e.preventDefault();
-            loadProjects(link.href, null);
-          });
-        });
+    // 2. Set active sector based on variable
+    sectorBtns.forEach(btn => {
+      if (btn.dataset.sector === activeSector) {
+        btn.classList.add('active');
+      } else {
+        btn.classList.remove('active');
       }
+    });
 
-      const loadProjects = async (url, clickedTab) => {
-        const container = document.getElementById('projects-container');
-        const grid = container.querySelector('.project-grid');
+    // Run the filter
+    filterProjects();
+  }
 
-        grid.style.opacity = '0.5';
-        grid.style.pointerEvents = 'none';
+  // ── Main filtering function ──
+  function filterProjects() {
+    let visibleCount = 0;
 
-        try {
-          const response = await fetch(url, {
-            headers: { 'X-Requested-With': 'XMLHttpRequest' }
-          });
-          const htmlText = await response.text();
+    cards.forEach(card => {
+      const status = card.dataset.status;
+      const sector = card.dataset.sector;
+      const categories = card.dataset.categories; // ",hvac,electrical,"
 
-          const parser = new DOMParser();
-          const doc = parser.parseFromString(htmlText, 'text/html');
-          const newContainer = doc.getElementById('projects-container');
+      const matchesStatus = (status === activeStatus);
+      const matchesSector = (!activeSector || sector === activeSector);
+      const matchesCategory = (!activeCategory || categories.includes(',' + activeCategory + ','));
 
-          if (newContainer) {
-            container.innerHTML = newContainer.innerHTML;
-          }
+      if (matchesStatus && matchesSector && matchesCategory) {
+        card.style.display = '';
+        setTimeout(() => card.classList.add('visible'), 50);
+        visibleCount++;
+      } else {
+        card.style.display = 'none';
+        card.classList.remove('visible');
+      }
+    });
 
-          window.history.pushState({ path: url }, '', url);
+    // Handle empty state message
+    emptyMessage = document.getElementById('projects-empty-message');
+    if (visibleCount === 0) {
+      if (!emptyMessage) {
+        emptyMessage = document.createElement('div');
+        emptyMessage.id = 'projects-empty-message';
+        emptyMessage.style.cssText = 'grid-column: 1/-1; text-align: center; padding: 4rem 0; color: var(--muted); width: 100%;';
+        emptyMessage.textContent = '{{ $isTr ? "Bu filtrelere uygun proje bulunamadı." : "No projects found for these filters." }}';
+        container.querySelector('.project-grid').appendChild(emptyMessage);
+      } else {
+        emptyMessage.style.display = '';
+      }
+    } else if (emptyMessage) {
+      emptyMessage.style.display = 'none';
+    }
 
-          if (clickedTab) {
-            filterTabs.forEach(t => t.classList.remove('active'));
-            clickedTab.classList.add('active');
-          }
+    // Recalculate populated categories and rebuild category tag buttons
+    updateCategoryTags();
 
-          attachPaginationEvents();
-          attachFlipCardEvents();
+    // Update URL query parameters
+    updateUrl();
+  }
 
-        } catch (error) {
-          console.error('Error fetching projects:', error);
-          grid.style.opacity = '1';
-          grid.style.pointerEvents = 'auto';
+  // ── Rebuild category list, displaying only those containing active projects ──
+  function updateCategoryTags() {
+    const activeCategoriesSet = new Set();
+
+    // Find all categories matching status and sector filters
+    cards.forEach(card => {
+      const status = card.dataset.status;
+      const sector = card.dataset.sector;
+      const categoriesStr = card.dataset.categories;
+
+      const matchesStatus = (status === activeStatus);
+      const matchesSector = (!activeSector || sector === activeSector);
+
+      if (matchesStatus && matchesSector) {
+        if (categoriesStr) {
+          const parts = categoriesStr.split(',').filter(Boolean);
+          parts.forEach(c => activeCategoriesSet.add(c));
         }
-      };
+      }
+    });
 
-      filterTabs.forEach(tab => {
-        tab.addEventListener('click', (e) => {
-          e.preventDefault();
-          loadProjects(tab.href, tab);
+    // Clear current elements
+    categoriesList.innerHTML = '';
+
+    // If no categories found for the active tab/sector, hide the wrapper
+    if (activeCategoriesSet.size === 0) {
+      categoriesWrapper.style.display = 'none';
+      return;
+    }
+
+    categoriesWrapper.style.display = '';
+
+    // Create the "All Categories" pill
+    const allBtn = document.createElement('button');
+    allBtn.className = 'project-category-btn' + (!activeCategory ? ' active' : '');
+    allBtn.textContent = '{{ $isTr ? "Tüm Kategoriler" : "All Categories" }}';
+    allBtn.addEventListener('click', () => {
+      activeCategory = '';
+      document.querySelectorAll('.project-category-btn').forEach(b => b.classList.remove('active'));
+      allBtn.classList.add('active');
+      filterProjects();
+    });
+    categoriesList.appendChild(allBtn);
+
+    // Create pills only for "populated" (dolu) categories
+    allCategories.forEach(cat => {
+      if (activeCategoriesSet.has(cat.slug)) {
+        const btn = document.createElement('button');
+        btn.className = 'project-category-btn' + (activeCategory === cat.slug ? ' active' : '');
+        btn.textContent = cat.name;
+        btn.addEventListener('click', () => {
+          if (activeCategory === cat.slug) {
+            activeCategory = ''; // Toggle off if clicked again
+            btn.classList.remove('active');
+            allBtn.classList.add('active');
+          } else {
+            activeCategory = cat.slug;
+            document.querySelectorAll('.project-category-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+          }
+          filterProjects();
         });
+        categoriesList.appendChild(btn);
+      }
+    });
+
+    // If active category is no longer valid in this tab/sector, reset it
+    if (activeCategory && !activeCategoriesSet.has(activeCategory)) {
+      activeCategory = '';
+      allBtn.classList.add('active');
+      filterProjects();
+    }
+  }
+
+  // ── Update URL without reloading page ──
+  function updateUrl() {
+    const p = new URLSearchParams();
+    
+    // Convert status internally to human-readable URL state
+    if (activeStatus === 'ongoing') {
+      p.set('durum', 'devam-eden');
+    } else if (activeStatus === 'completed' && ('{{ $currentStatus }}' === 'completed' || activeSector || activeCategory)) {
+      p.set('durum', 'tamamlanan');
+    }
+
+    if (activeSector) p.set('sektor', activeSector);
+    if (activeCategory) p.set('kategori', activeCategory);
+
+    const qs = p.toString();
+    const baseUrl = '{{ $baseUrl }}';
+    const newUrl = baseUrl + (qs ? '?' + qs : '');
+    window.history.pushState({ path: newUrl }, '', newUrl);
+  }
+
+  // ── Tab click handler ──
+  tabBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      activeStatus = btn.dataset.status;
+      tabBtns.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      
+      // Reset category
+      activeCategory = '';
+      
+      // Check if active sector has any projects under the new status. If not, reset sector
+      let sectorHasProjects = false;
+      cards.forEach(card => {
+        if (card.dataset.status === activeStatus && (!activeSector || card.dataset.sector === activeSector)) {
+          sectorHasProjects = true;
+        }
       });
+      if (!sectorHasProjects) {
+        activeSector = '';
+        sectorBtns.forEach(b => b.classList.remove('active'));
+        const allSecBtn = document.querySelector('.project-sector-btn[data-sector=""]');
+        if (allSecBtn) allSecBtn.classList.add('active');
+      }
 
-      attachPaginationEvents();
-      attachFlipCardEvents();
+      filterProjects();
+    });
+  });
 
-      window.addEventListener('popstate', (e) => {
-        if (e.state && e.state.path) {
-          let matchingTab = Array.from(filterTabs).find(t => t.href === e.state.path) || filterTabs[0];
-          loadProjects(e.state.path, matchingTab);
+  // ── Sector click handler ──
+  sectorBtns.forEach(btn => {
+    btn.addEventListener('click', () => {
+      activeSector = btn.dataset.sector;
+      sectorBtns.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+
+      // Reset category to avoid mismatched filters
+      activeCategory = '';
+
+      filterProjects();
+    });
+  });
+
+  // ── Mobile Touch Cards Flipper ──
+  function attachFlipCards() {
+    const isMobile = window.matchMedia('(hover:none)').matches;
+    container.querySelectorAll('.flip-card-wrapper').forEach(card => {
+      card.addEventListener('click', (e) => {
+        if (!isMobile) return;
+        if (e.target.closest('.flip-card-back__btn')) return;
+        if (!card.classList.contains('flipped')) {
+          e.preventDefault();
+          container.querySelectorAll('.flip-card-wrapper.flipped').forEach(c => c.classList.remove('flipped'));
+          card.classList.add('flipped');
         } else {
-          window.location.reload();
+          card.classList.remove('flipped');
         }
       });
     });
-  </script>
+  }
+
+  // ── Listen to browser back/forward buttons ──
+  window.addEventListener('popstate', (e) => {
+    const params = new URLSearchParams(window.location.search);
+    const durum = params.get('durum');
+    activeStatus = (durum === 'devam-eden') ? 'ongoing' : 'completed';
+    activeSector = params.get('sektor') || '';
+    activeCategory = params.get('kategori') || '';
+    initFilters();
+  });
+
+  // ── Initial State mapping ──
+  const initialDurum = '{{ $currentStatus }}';
+  if (initialDurum === 'devam-eden') {
+    activeStatus = 'ongoing';
+  } else {
+    activeStatus = 'completed';
+  }
+  
+  activeSector = '{{ $currentFilter }}';
+  activeCategory = '{{ $currentCategory }}';
+
+  // Run initialization
+  container.querySelectorAll('.reveal').forEach(el => el.classList.add('visible'));
+  initFilters();
+  attachFlipCards();
+});
+</script>
 @endpush
